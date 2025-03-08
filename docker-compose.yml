@@ -1,4 +1,4 @@
-version: "3.8"
+# version: "3.8"
 
 services:
   postgres:
@@ -15,18 +15,22 @@ services:
       - "5432:5432"
 
   camunda:
-    image: camunda-community
+    # image: camunda-community
+    build:  # Use custom Dockerfile instead of pre-built image
+      context: .
+      dockerfile: Dockerfile    
     container_name: camunda
     restart: always
     depends_on:
       - postgres
-    env_file:
-      - .env
-      # - DB_DRIVER=org.postgresql.Driver
-      # - DB_URL=jdbc:postgresql://postgres:5432/camunda
-      # - DB_USERNAME=camunda
-      # - DB_PASSWORD=camunda_password
-      # - WAIT_FOR=postgres:5432      
+    # env_file:
+    #   - .env
+    environment:      
+      - DB_DRIVER=org.postgresql.Driver
+      - DB_URL=jdbc:postgresql://postgres:5432/camunda
+      - DB_USERNAME=camunda
+      - DB_PASSWORD=camunda_password
+      - WAIT_FOR=postgres:5432      
     volumes:
       - ./processes:/camunda/configuration/resources  # Mount all BPMN processes
       - ./assets/global:/camunda/webapps/global  # Global CSS, JS, and images    
