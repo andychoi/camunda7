@@ -314,3 +314,175 @@ curl -X POST http://localhost:8080/engine-rest/deployment/create \
   -F "task-form.html=@assets/forms/task-form.html"
 
 🚀 Now Camunda can load BPMN workflows with embedded forms, styles, and images! 🚀
+
+## SINGLE level, MULTI level structure
+📌 Is a Single-Level Folder Structure Good Enough for Multiple Processes?
+
+A single-level folder structure (processes/, assets/) can work for small projects but can become messy when handling multiple processes with different forms, scripts, and assets.
+
+For better organization and scalability, you should use a multi-level structured folder that groups BPMN, forms, styles, and scripts per process.
+
+⸻
+
+🎯 Recommended Multi-Level Folder Structure
+
+To keep processes and assets organized, use separate subfolders for each BPMN process:
+
+camunda_project/
+│── docker-compose.yml  # Camunda + PostgreSQL setup
+│── .env  # Environment variables
+│── processes/
+│   ├── process1/
+│   │   ├── process1.bpmn
+│   │   ├── forms/
+│   │   │   ├── form1.html
+│   │   │   ├── form2.html
+│   │   ├── scripts/
+│   │   │   ├── custom-script.js
+│   │   ├── styles/
+│   │   │   ├── style.css
+│   ├── process2/
+│   │   ├── process2.bpmn
+│   │   ├── forms/
+│   │   │   ├── formA.html
+│   │   │   ├── formB.html
+│   │   ├── scripts/
+│   │   │   ├── process2.js
+│   │   ├── styles/
+│   │   │   ├── process2.css
+│── assets/
+│   ├── global/
+│   │   ├── common-style.css
+│   │   ├── global-script.js
+│   │   ├── images/
+│   │   │   ├── logo.png
+│   │   │   ├── background.jpg
+
+
+
+⸻
+
+🎯 Why Use This Multi-Level Structure?
+
+✅ Keeps BPMN processes separate (each process has its own folder).
+✅ Organizes task forms, scripts, and styles per process.
+✅ Allows reusing global assets (CSS, JS, images) across processes.
+✅ Scales well when handling multiple processes.
+
+⸻
+
+🚀 Update docker-compose.yml to Support Multi-Level Structure
+
+Modify docker-compose.yml so Camunda loads processes and assets properly.
+
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: camunda_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: camunda
+      POSTGRES_USER: camunda
+      POSTGRES_PASSWORD: camunda_password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  camunda:
+    image: camunda-community
+    container_name: camunda
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - DB_DRIVER=org.postgresql.Driver
+      - DB_URL=jdbc:postgresql://postgres:5432/camunda
+      - DB_USERNAME=camunda
+      - DB_PASSWORD=camunda_password
+      - WAIT_FOR=postgres:5432
+    volumes:
+      - ./processes:/camunda/configuration/resources  # Mount all BPMN processes
+      - ./assets/global:/camunda/webapps/global  # Global CSS, JS, and images
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+      - "9404:9404"
+
+volumes:
+  pg_data:
+
+
+
+⸻
+
+🎯 How to Deploy BPMN, Forms, and Assets in This Structure?
+
+✅ Option 1: Deploy via Auto-Mount (Recommended)
+
+Simply place your BPMN files, forms, and assets in their respective directories.
+Camunda will automatically load them when restarted.
+
+docker-compose restart camunda
+
+✅ Option 2: Deploy via REST API
+
+To deploy only a specific process dynamically:
+
+curl -X POST http://localhost:8080/engine-rest/deployment/create \
+  -H "Content-Type: multipart/form-data" \
+  -F "deployment-name=process1" \
+  -F "deploy-changed-only=true" \
+  -F "process1.bpmn=@processes/process1/process1.bpmn" \
+  -F "form1.html=@processes/process1/forms/form1.html" \
+  -F "custom-script.js=@processes/process1/scripts/custom-script.js" \
+  -F "style.css=@processes/process1/styles/style.css"
+
+
+
+⸻
+
+🎯 How to Reference Embedded Forms in BPMN?
+
+For User Tasks, use:
+
+<bpmn:userTask id="UserTask_1" name="Review Request">
+    <bpmn:extensionElements>
+        <camunda:formKey>embedded:app:forms/form1.html</camunda:formKey>
+    </bpmn:extensionElements>
+</bpmn:userTask>
+
+This will load form1.html from the process’s forms directory.
+
+⸻
+
+🎯 Final Steps
+
+🚀 Start Camunda + PostgreSQL
+
+docker-compose up -d
+
+🚀 Deploy BPMN, Forms, and Assets
+	•	Drag & Drop .bpmn, .html, .css, .js, and images into the structured folders.
+	•	Restart Camunda to auto-deploy all files:
+
+docker-compose restart camunda
+
+
+
+or
+	•	Use the REST API to deploy a specific process.
+
+⸻
+
+🎯 Summary
+
+✅ Used a multi-level folder structure for better organization
+✅ Processes are separated, each with its own BPMN, forms, scripts, and styles
+✅ Global assets (CSS, JS, images) are shared across processes
+✅ Updated docker-compose.yml to mount these folders correctly
+✅ Supported auto-deployment & API-based deployment
+
+🚀 Now your Camunda setup is clean, scalable, and ready for large-scale process management! 🚀

@@ -28,8 +28,10 @@ services:
       # - DB_PASSWORD=camunda_password
       # - WAIT_FOR=postgres:5432      
     volumes:
-      - camunda_processes:/camunda/configuration/resources  # BPMN processes
-      - camunda_assets:/camunda/webapps/forms  # HTML forms, CSS, JS, Images    
+      - ./processes:/camunda/configuration/resources  # Mount all BPMN processes
+      - ./assets/global:/camunda/webapps/global  # Global CSS, JS, and images    
+      # - camunda_processes:/camunda/configuration/resources  # BPMN processes
+      # - camunda_assets:/camunda/webapps/forms  # HTML forms, CSS, JS, Images    
     ports:
       - "8080:8080"
       - "8000:8000"
@@ -37,5 +39,5 @@ services:
 
 volumes:
   pg_data:
-  camunda_processes:  # Volume for BPMN deployment  
-  camunda_assets:  # Stores forms, HTML, CSS, and images
+  # camunda_processes:  # Volume for BPMN deployment  
+  # camunda_assets:  # Stores forms, HTML, CSS, and images
