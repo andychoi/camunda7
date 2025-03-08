@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: camunda_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: camunda
+      POSTGRES_USER: camunda
+      POSTGRES_PASSWORD: camunda_password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  camunda:
+    image: camunda-community
+    container_name: camunda
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+      # - DB_DRIVER=org.postgresql.Driver
+      # - DB_URL=jdbc:postgresql://postgres:5432/camunda
+      # - DB_USERNAME=camunda
+      # - DB_PASSWORD=camunda_password
+      # - WAIT_FOR=postgres:5432      
+    volumes:
+      - camunda_processes:/camunda/configuration/resources  # BPMN processes
+      - camunda_assets:/camunda/webapps/forms  # HTML forms, CSS, JS, Images    
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+      - "9404:9404"
+
+volumes:
+  pg_data:
+  camunda_processes:  # Volume for BPMN deployment  
+  camunda_assets:  # Stores forms, HTML, CSS, and images
