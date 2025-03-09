@@ -46,45 +46,46 @@ cp "/tmp/camunda-${DISTRO}.sh" /camunda/camunda.sh
 # Ensure Maven local repository directory exists
 mkdir -p /root/.m2/repository
 
-# Download and register database drivers (MySQL & PostgreSQL) using Maven
-mvn dependency:get -B --global-settings /tmp/settings.xml \
-    -DremoteRepositories="camunda-nexus::::https://artifacts.camunda.com/public" \
-    -DgroupId="org.camunda.bpm" -DartifactId="camunda-database-settings" \
-    -Dversion="${ARTIFACT_VERSION}" -Dpackaging="pom" -Dtransitive=false \
-    -Dmaven.repo.local=/root/.m2  # Explicitly set Maven local repository
+# Download PostgreSQL JDBC Driver
+POSTGRESQL_VERSION=42.7.4  # Ensure latest version
 
-# Find the downloaded database settings POM file
-cambpmdbsettings_pom_file=$(find /root/.m2 -name "camunda-database-settings-${ARTIFACT_VERSION}.pom" -print | head -n 1)
+echo "Downloading PostgreSQL JDBC Driver..."
+wget -q -O /tmp/postgresql-${POSTGRESQL_VERSION}.jar \
+    https://repo1.maven.org/maven2/org/postgresql/postgresql/${POSTGRESQL_VERSION}/postgresql-${POSTGRESQL_VERSION}.jar
 
-# Check if the POM file was found
-if [ -z "$cambpmdbsettings_pom_file" ]; then
-    echo "Error: Database settings POM file not found!"
+# Verify if the file was successfully downloaded
+if [ ! -f "/tmp/postgresql-${POSTGRESQL_VERSION}.jar" ]; then
+    echo "Error: PostgreSQL JDBC Driver download failed!"
     exit 1
 fi
 
-# Extract MySQL & PostgreSQL versions
-MYSQL_VERSION=$(xmlstarlet sel -t -v "//_:version.mysql" "$cambpmdbsettings_pom_file" || echo "8.0.33")
-POSTGRESQL_VERSION=$(xmlstarlet sel -t -v "//_:version.postgresql" "$cambpmdbsettings_pom_file" || echo "42.5.4")
+echo "Successfully downloaded PostgreSQL JDBC Driver."
 
-echo "MySQL version: ${MYSQL_VERSION}"
-echo "PostgreSQL version: ${POSTGRESQL_VERSION}"
+# Ensure Tomcat's lib directory exists
+TOMCAT_LIB_DIR="/camunda/server/apache-tomcat-9.0.43/lib"
+mkdir -p "${TOMCAT_LIB_DIR}"
 
-# Download the correct MySQL & PostgreSQL drivers
-mvn dependency:copy -B -Dartifact="mysql:mysql-connector-java:${MYSQL_VERSION}:jar" -DoutputDirectory=/tmp/
-mvn dependency:copy -B -Dartifact="org.postgresql:postgresql:${POSTGRESQL_VERSION}:jar" -DoutputDirectory=/tmp/
+# Move the PostgreSQL driver to Tomcat's lib directory
+echo "Placing PostgreSQL JDBC Driver in ${TOMCAT_LIB_DIR}..."
+cp /tmp/postgresql-${POSTGRESQL_VERSION}.jar "${TOMCAT_LIB_DIR}/"
+
+# Verify if the file was successfully copied
+if [ -f "${TOMCAT_LIB_DIR}/postgresql-${POSTGRESQL_VERSION}.jar" ]; then
+    echo "PostgreSQL JDBC Driver successfully placed in Tomcat's lib folder."
+else
+    echo "Error: PostgreSQL JDBC Driver copy to ${TOMCAT_LIB_DIR} failed!"
+    exit 1
+fi
 
 # Ensure necessary directories exist before copying files
 mkdir -p /camunda/lib /camunda/bin /camunda/configuration/userlib
 
-# Move database drivers to the appropriate directory
+# Move database drivers to the appropriate directory based on Camunda distribution
 case ${DISTRO} in
     wildfly*)
         cat <<-EOF > /tmp/batch.cli
 batch
 embed-server --std-out=echo
-
-module add --name=mysql.mysql-connector-java --slot=main --resources=/tmp/mysql-connector-java-${MYSQL_VERSION}.jar --dependencies=javax.api,javax.transaction.api
-/subsystem=datasources/jdbc-driver=mysql:add(driver-name="mysql",driver-module-name="mysql.mysql-connector-java",driver-xa-datasource-class-name=com.mysql.cj.jdbc.MysqlXADataSource)
 
 module add --name=org.postgresql.postgresql --slot=main --resources=/tmp/postgresql-${POSTGRESQL_VERSION}.jar --dependencies=javax.api,javax.transaction.api
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name="postgresql",driver-module-name="org.postgresql.postgresql",driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
@@ -95,11 +96,9 @@ EOF
         rm -rf /camunda/standalone/configuration/standalone_xml_history/current/*
         ;;
     run*)
-        cp /tmp/mysql-connector-java-${MYSQL_VERSION}.jar /camunda/configuration/userlib
         cp /tmp/postgresql-${POSTGRESQL_VERSION}.jar /camunda/configuration/userlib
         ;;
     tomcat*)
-        cp /tmp/mysql-connector-java-${MYSQL_VERSION}.jar /camunda/lib
         cp /tmp/postgresql-${POSTGRESQL_VERSION}.jar /camunda/lib
         
         # Ensure /camunda/bin exists before modifying setenv.sh
