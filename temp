@@ -1,0 +1,78 @@
+📌 Issue: Unable to find main class
+
+The error:
+
+Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:2.7.14:repackage
+Execution repackage of goal org.springframework.boot:spring-boot-maven-plugin:2.7.14:repackage failed: Unable to find main class
+
+happens because Spring Boot cannot find a @SpringBootApplication class to start the application.
+
+⸻
+
+✅ Fix: Create the Main Spring Boot Application Class
+
+Make sure you have the following main class inside src/main/java/com/example/CamundaApplication.java:
+
+package com.example;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CamundaApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(CamundaApplication.class, args);
+    }
+}
+
+✔ This ensures Spring Boot has a valid entry point.
+
+⸻
+
+✅ Verify the Correct Package Structure
+
+Your project should have this structure:
+
+camunda-spring-boot/
+│── src/
+│   ├── main/
+│   │   ├── java/com/example/
+│   │   │   ├── CamundaApplication.java  # ✅ Main Spring Boot Class
+│   │   │   ├── MyCamundaConfig.java  # ✅ Camunda Configuration (Optional)
+│   │   ├── resources/
+│   │   │   ├── application.yml  # ✅ Spring Boot Config
+│── pom.xml
+│── Dockerfile
+│── docker-compose.yml
+
+If your CamundaApplication.java is in a different package, move it to com.example or update pom.xml to reflect the correct package.
+
+⸻
+
+✅ Rebuild & Run
+
+Now, try building the project again:
+
+mvn clean package
+
+If successful, it should generate:
+
+target/camunda-spring-boot.jar
+
+Then run the application:
+
+java -jar target/camunda-spring-boot.jar
+
+Or using Docker:
+
+docker-compose up -d --build
+
+
+
+⸻
+
+🎯 Summary
+
+✅ Created CamundaApplication.java with @SpringBootApplication
+✅ Ensured correct package structure
+✅ Now Spring Boot can detect the main class and build the JAR! 🚀

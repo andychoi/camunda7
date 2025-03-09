@@ -1,1 +1,57 @@
+# Ignore target directory (Maven build artifacts)
+target/
+
+# Ignore IDE-specific files
 .idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore Eclipse/IntelliJ/VSCode metadata
+.vscode/
+*.classpath
+*.project
+*.settings/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore logs and temp files
+logs/
+*.log
+*.out
+*.err
+hs_err_pid*
+
+# Ignore dependency directories
+node_modules/
+dist/
+
+# Ignore build artifacts
+*.jar
+*.war
+*.ear
+
+# Ignore environment variables and secrets
+.env
+*.env
+.env.local
+.env.production
+.env.development
+.env.test
+*.key
+*.pem
+
+# Ignore database files (if applicable)
+*.db
+*.sql
+
+# Ignore Camunda process definition artifacts (if needed)
+bpmn-generated/
+bpmn-diagrams/
+
+# Ignore Maven Wrapper files (optional)
+.mvn/
+mvnw
+mvnw.cmd

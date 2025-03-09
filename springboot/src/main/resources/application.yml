@@ -1,0 +1,66 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: camunda-spring-boot
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/camunda
+    username: camunda
+    password: camunda_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 60000
+      connection-timeout: 30000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update  # Use 'validate' for production
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+camunda:
+  bpm:
+    admin-user:
+      id: demo
+      password: demo
+    database:
+      schema-update: true  # Set to 'false' if Flyway manages DB
+    webapp:
+      index-redirect-enabled: true
+    job-execution:
+      enabled: true
+    history-level: full
+    authorization:
+      enabled: true
+    default-number-of-retries: 3
+    eventing:
+      task: true
+      history: true
+    deployment:
+      auto-deploy-enabled: true
+      scan-for-process-definitions: true
+      resume-previous-versions: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    root: INFO
+    org.camunda.bpm: DEBUG
+    org.springframework: WARN
