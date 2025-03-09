@@ -1,0 +1,8 @@
+{
+    "securityFilterRules": [
+      {
+        "urlPattern": "/*",
+        "requiredRoles": []
+      }
+    ]
+  }
