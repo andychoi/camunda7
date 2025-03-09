@@ -31,7 +31,7 @@ fi
 # Extract the downloaded file
 if [ "${FILE_DOWNLOADED##*.}" = "gz" ]; then
     echo "Extracting ${FILE_TAR}..."
-    tar xzf "/tmp/${FILE_TAR}" -C /camunda --strip-components=1
+    tar xzf "/tmp/${FILE_TAR}" -C /camunda 
 elif [ "${FILE_DOWNLOADED##*.}" = "zip" ]; then
     echo "Extracting ${FILE_ZIP}..."
     unzip -q "${FILE_DOWNLOADED}" -d /camunda

@@ -3,11 +3,17 @@ set -Eeu
 
 trap 'Error on line $LINENO' ERR
 
-# Use exising tomcat ditribution if present..
-CATALINA_HOME="${CATALINA_HOME:-/camunda}"
+# Dynamically locate the correct CATALINA_HOME directory
+CATALINA_HOME=$(find /camunda/camunda-bpm-tomcat-* -maxdepth 3 -type d -name "apache-tomcat-*" | head -n 1)
+
+if [[ -z "$CATALINA_HOME" ]]; then
+  echo "Error: Unable to detect CATALINA_HOME. Make sure Tomcat is extracted correctly."
+  exit 1
+fi
+
+echo "Using CATALINA_HOME: $CATALINA_HOME"
 
 # Set default values for DB_ variables
-# Set Password as Docker Secrets for Swarm-Mode
 if [[ -z "${DB_PASSWORD:-}" && -n "${DB_PASSWORD_FILE:-}" && -f "${DB_PASSWORD_FILE:-}" ]]; then
   export DB_PASSWORD="$(< "${DB_PASSWORD_FILE}")"
 fi
@@ -45,7 +51,7 @@ fi
 
 CMD="${CATALINA_HOME}/bin/catalina.sh"
 if [ "${DEBUG}" = "true" ]; then
-  echo "Enabling debug mode, JPDA accesible under port 8000"
+  echo "Enabling debug mode, JPDA accessible under port 8000"
   export JPDA_ADDRESS="0.0.0.0:8000"
   CMD+=" jpda"
 fi

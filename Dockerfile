@@ -8,12 +8,7 @@ ARG EE=false
 ARG USER
 ARG PASSWORD
 
-# ARG MAVEN_PROXY_HOST
-# ARG MAVEN_PROXY_PORT
-# ARG MAVEN_PROXY_USER
-# ARG MAVEN_PROXY_PASSWORD
-
-ARG JMX_PROMETHEUS_VERSION=0.12.0
+ARG JMX_PROMETHEUS_VERSION=0.20.0
 
 RUN apk add --no-cache \
         bash \
@@ -56,8 +51,6 @@ ENV JMX_PROMETHEUS_PORT=9404
 
 EXPOSE 8080 8000 9404
 
-# Downgrading wait-for-it is necessary until this PR is merged
-# https://github.com/vishnubob/wait-for-it/pull/68
 RUN apk add --no-cache \
         bash \
         ca-certificates \
@@ -75,7 +68,12 @@ RUN addgroup -g 1000 -S camunda && \
 WORKDIR /camunda
 USER camunda
 
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["./camunda.sh"]
-
+# Copy extracted Camunda files
 COPY --chown=camunda:camunda --from=builder /camunda .
+
+# Overwrite Camunda's default startup script with our custom script
+COPY --chown=camunda:camunda camunda-tomcat.sh /camunda/
+RUN chmod +x /camunda/camunda-tomcat.sh
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["/camunda/camunda-tomcat.sh"]
