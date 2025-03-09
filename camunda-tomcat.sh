@@ -4,7 +4,12 @@ set -Eeu
 trap 'Error on line $LINENO' ERR
 
 # Dynamically locate the correct CATALINA_HOME directory
-CATALINA_HOME=$(find /camunda/camunda-bpm-tomcat-* -maxdepth 3 -type d -name "apache-tomcat-*" | head -n 1)
+# Dynamically detect the correct Tomcat directory
+if [ -d "/camunda/server/apache-tomcat-9.0.43" ]; then
+  export CATALINA_HOME="/camunda/server/apache-tomcat-9.0.43"
+else
+  CATALINA_HOME=$(find /camunda -maxdepth 3 -type d -name "apache-tomcat-*" | head -n 1)
+fi
 
 if [[ -z "$CATALINA_HOME" ]]; then
   echo "Error: Unable to detect CATALINA_HOME. Make sure Tomcat is extracted correctly."

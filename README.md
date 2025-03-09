@@ -10,6 +10,11 @@ Camunda Platform or can be extended with own process applications. It is
 planned to provide images on the official [docker registry][] for every upcoming
 release, which includes alpha releases.
 
+## Inspect
+```
+docker run --rm -it --entrypoint /bin/sh camunda7-camunda
+```
+
 ## Get started
 
 To start the latest release:
