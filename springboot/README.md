@@ -1,6 +1,10 @@
 🚀 Spring Boot with Camunda 7
 
 https://docs.camunda.org/manual/latest/user-guide/spring-boot-integration/
+https://github.com/camunda/camunda-bpm-platform/tree/master/spring-boot-starter
+
+webapp: https://github.com/camunda/camunda-bpm-examples/blob/7.18/spring-boot-starter/example-webapp/README.md
+auto-deploy: https://github.com/camunda/camunda-bpm-examples/tree/7.18/spring-boot-starter/example-autodeployment
 
 By default the application path is /camunda, so without any further configuration you can access the Webapps under http://localhost:8080/camunda/app/.
 

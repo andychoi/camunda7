@@ -1,0 +1,21 @@
+camunda.bpm:
+  webapp:
+    index-redirect-enabled: true
+  admin-user:
+    id: demo
+    password: demo
+
+management:
+  metrics:
+    enable:
+      system: false
+      jvm: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+        
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration
