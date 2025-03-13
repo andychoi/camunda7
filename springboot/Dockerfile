@@ -21,10 +21,10 @@ EXPOSE 8080
 # Set default profile to production, override if needed
 ENV SPRING_PROFILES_ACTIVE=prod
 
-# Allow database configuration through environment variables
-ENV DB_URL=jdbc:postgresql://localhost:5432/camunda
-ENV DB_USERNAME=camunda
-ENV DB_PASSWORD=camunda
+# ✅ Corrected: Use `camunda-db` instead of `localhost`
+ENV DB_URL=jdbc:postgresql://camunda-db:5432/camunda
+ENV DB_USERNAME=postgres
+ENV DB_PASSWORD=postgres
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

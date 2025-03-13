@@ -1,14 +1,15 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/camunda}
-    username: ${DB_USERNAME:camunda}
-    password: ${DB_PASSWORD:camunda}
+    url: ${DB_URL:jdbc:postgresql://camunda-db:5432/camunda}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate  # Prevents accidental schema changes in production
+      # ddl-auto: validate  # Prevents accidental schema changes in production
+      ddl-auto: update  # ✅ Ensure Hibernate updates schema if needed
     show-sql: false
 
   security:
@@ -21,7 +22,8 @@ camunda:
   bpm:
     database:
       type: postgres
-      schema-update: false
+      # schema-update: false
+      schema-update: true  # ✅ This enables Camunda automatic schema creation
     webapp:
       index-redirect-enabled: true
     authorization:
