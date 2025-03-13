@@ -1,3 +1,15 @@
+camunda:
+  bpm:
+    database:
+      type: h2
+      schema-update: true  
+    webapp:
+      index-redirect-enabled: true
+    authorization:
+      enabled: false  # No authentication in dev mode
+    login:
+      enabled: false
+
 spring:
   datasource:
     url: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -16,17 +28,11 @@ spring:
       ddl-auto: update
     show-sql: true
 
-camunda:
-  bpm:
-    database:
-      type: h2
-      schema-update: true
-    webapp:
-      index-redirect-enabled: true
-    authorization:
-      enabled: false
-    login:
-      enabled: false
+  security:
+    user:
+      name: admin
+      password: admin
+      roles: ADMIN
 
 server:
-  port: 8080
+  port: 8080      

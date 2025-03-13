@@ -2,6 +2,14 @@
 This project is used as part of a video tutorial in order to show how you can use various features of Camunda 7 in a spring boot application.
 Be aware that this is specific to Camunda 7 and concepts described here are not compatible with Camunda Platform 8.
 
+## Dev, Prod
+
+- Dev mode: mvn spring-boot:run -Dspring-boot.run.profiles=dev
+- Prod mode: mvn spring-boot:run -Dspring-boot.run.profiles=prod
+
+If deploying in Docker, use environment-specific configuration files with:
+export SPRING_PROFILES_ACTIVE=prod
+export ADMIN_PASSWORD=securepassword
 
 ![Video Tutorial Badge](https://img.shields.io/badge/Tutorial%20Reference%20Project-Tutorials%20for%20getting%20started%20with%20Camunda-%2338A3E1)
 <img src="https://img.shields.io/badge/Camunda%20DevRel%20Project-Created%20by%20the%20Camunda%20Developer%20Relations%20team-0Ba7B9"> ![Compatible with: Camunda Platform 7](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%207-26d07c)

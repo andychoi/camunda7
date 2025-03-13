@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  camunda-app:
+    build: .
+    container_name: camunda-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod  # Change to 'dev' for development mode, or 'prod' for production mode
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: camunda-db
+      DB_PORT: 5432
+    depends_on:
+      camunda-db:
+        condition: service_healthy
+    networks:
+      - camunda-network
+
+  camunda-db:
+    image: postgres:13
+    container_name: camunda-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: camunda
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - camunda-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d camunda"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    networks:
+      - camunda-network
+
+  camunda-adminer:
+    image: adminer
+    container_name: camunda-adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      camunda-db:
+        condition: service_healthy
+    networks:
+      - camunda-network
+
+networks:
+  camunda-network:
+    driver: bridge
+
+volumes:
+  camunda-db-data:

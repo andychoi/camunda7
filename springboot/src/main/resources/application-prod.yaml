@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/camunda}
+    username: ${DB_USERNAME:camunda}
+    password: ${DB_PASSWORD:camunda}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate  # Prevents accidental schema changes in production
+    show-sql: false
+
+  security:
+    user:
+      name: admin  # Default admin user
+      password: ${ADMIN_PASSWORD}  # Set password via environment variable
+      roles: ADMIN
+
+camunda:
+  bpm:
+    database:
+      type: postgres
+      schema-update: false
+    webapp:
+      index-redirect-enabled: true
+    authorization:
+      enabled: true
+    login:
+      enabled: true
+
+server:
+  port: 8080
