@@ -8,12 +8,20 @@
   <artifactId>Lafayette</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
+  <!-- Define all versions in properties -->
+  <properties>
+    <spring.boot.version>2.4.3</spring.boot.version>
+    <camunda.version>7.15.0</camunda.version>
+    <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+    <java.version>11</java.version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>2.4.3</version>
+        <version>${spring.boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -21,7 +29,7 @@
       <dependency>
         <groupId>org.camunda.bpm</groupId>
         <artifactId>camunda-bom</artifactId>
-        <version>7.15.0</version>
+        <version>${camunda.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -32,13 +40,13 @@
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
-      <version>7.15.0</version>
+      <version>${camunda.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
-      <version>7.15.0</version>
+      <version>${camunda.version}</version>
     </dependency>
 
     <dependency>
@@ -60,7 +68,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -68,16 +75,16 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>2.4.3</version>
+        <version>${spring.boot.version}</version>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>${maven.compiler.plugin.version}</version>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
     </plugins>
