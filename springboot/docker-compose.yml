@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  camunda-app:
+  camunda-platform:
     build: .
-    container_name: camunda-app
+    container_name: camunda-platform
     ports:
       - "8080:8080"
     environment:

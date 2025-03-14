@@ -1,0 +1,19 @@
+spring:
+  application.name: camunda-business-process-app
+  datasource:
+    url: jdbc:postgresql://camunda-db:5432/camunda
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10    
+  jpa:
+    hibernate.ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+camunda:
+  bpm:
+    deployment:
+      auto-deploy: false # Disable auto deployment
+    database:
+      schema-update: false # Avoid modifying DB schema
