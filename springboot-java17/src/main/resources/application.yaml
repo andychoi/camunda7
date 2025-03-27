@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+camunda:
+  bpm:
+    database:
+      type: h2
+      schema-update: true
+    webapp:
+      index-redirect-enabled: true
+    authorization:
+      enabled: false
+    login:
+      enabled: false
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:4200}
+
+server:
+  port: 8080
